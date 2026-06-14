@@ -10,3 +10,6 @@ Thumbs.db
 
 # Local backups exported from the extension
 dashboard-backup-*.json
+
+# Chrome Web Store submission artifacts (local only)
+store-assets/
