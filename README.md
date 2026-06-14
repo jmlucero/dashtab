@@ -37,26 +37,41 @@ No accounts, no servers, no tracking — everything lives in your browser.
 
 ## Installation (load unpacked)
 
-dashtab is not on the Chrome Web Store — you load it manually in seconds:
+dashtab is not on the Chrome Web Store, so you install it manually. This is the
+standard "load unpacked" flow for a developer/unpacked extension — it takes about
+a minute and works in any Chromium browser (Chrome, Edge, Brave).
 
-1. Download or clone this repository.
-2. Open `chrome://extensions` in Chrome.
-3. Turn on **Developer mode** (top-right toggle).
-4. Click **Load unpacked** and select the project folder.
-5. Open a new tab. That's it.
+1. **Get the code.** Either:
+   - Click the green **Code → Download ZIP** button on this page and unzip it, or
+   - Clone it: `git clone https://github.com/jmlucero/dashtab.git`
+2. Open **`chrome://extensions`** in your browser (paste it in the address bar).
+3. Toggle **Developer mode** ON (top-right corner).
+4. Click **Load unpacked** and select the **`dashtab` folder** you just downloaded
+   (the folder that contains `manifest.json`, not a parent folder).
+5. Open a **new tab** — dashtab replaces the default new tab page. Done.
 
-To update later, pull the latest changes and hit the reload (↻) button on the
-extension card in `chrome://extensions`.
+> **Note:** because it's loaded unpacked, the folder must stay where you put it. If
+> you move or delete it, Chrome disables the extension.
+
+**To update later:** pull the latest changes (`git pull`) or download the new ZIP
+over the old folder, then click the reload (↻) icon on the dashtab card in
+`chrome://extensions`.
+
+**To remove it:** click **Remove** on the dashtab card in `chrome://extensions`.
 
 ## Usage
 
-- Click **⚙ Settings** (top-right) to add tickers, set your city, edit the greeting
-  and toggle the notes row.
+- Click **⚙ Settings** (top-right) to add tickers, set your weather city, edit the
+  greeting and turn the notes row on or off.
 - Use the **Quick add** chips for common tickers, or type any symbol (e.g. `GOOGL`,
-  `BTC-USD`, `^GSPC`).
-- Enter **shares** next to a ticker to unlock weighted portfolio math. Leave it
-  blank to keep it as a simple watchlist.
-- The notes toggle and privacy toggle save instantly — no need to reload.
+  `BTC-USD`, `^GSPC` for the S&P 500).
+- Enter **shares** next to a ticker to unlock weighted portfolio math and the
+  "Current Portfolio" summary bar. Leave it blank to keep it as a simple watchlist.
+- **Notes** (when enabled): click an empty slot to add one, drag to reorder, and
+  use **`Cmd/Ctrl+B`** for bold and **`Cmd/Ctrl+K`** to turn selected text into a link.
+- The **privacy** toggle (👁️) hides your portfolio value and holdings instantly.
+- The notes toggle and privacy toggle save automatically — no need to reload.
+- Use **Export / Import Backup** in Settings to save or restore your whole setup.
 
 ## Privacy
 
