@@ -245,6 +245,37 @@ header {
   align-items: stretch;
 }
 
+/* Pista de bienvenida (solo la primera vez) */
+.onboarding-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--accent-dim);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.onboarding-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.onboarding-dismiss:hover {
+  color: var(--text);
+}
+
 .task-item {
   position: relative;
   flex: 1;
@@ -468,6 +499,12 @@ header {
   padding: 0;
   margin: 0;
   line-height: 1.5;
+}
+
+.task-inline-input:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 /* ========= SETTINGS PANEL ========= */

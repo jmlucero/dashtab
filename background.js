@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function fetchStockData(ticker) {
-  // VOLVEMOS A LA API V8 (NUNCA DA ERROR 401)
+  // Use the public v8 chart API (never returns 401)
   const urls = [
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d&includePrePost=false`,
     `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d&includePrePost=false`,
@@ -46,27 +46,27 @@ async function fetchStockData(ticker) {
 
       const currentPrice = meta.regularMarketPrice;
 
-      // Limpiamos datos nulos del historial
+      // Strip null entries from the history
       const validCloses = [];
       for (let i = 0; i < closes.length; i++) {
         if (closes[i] != null) validCloses.push(closes[i]);
       }
 
       // ==========================================
-      // EL ALGORITMO INFALIBLE (Basado en tu código original)
+      // Reliable daily-change algorithm
       // ==========================================
       let referenceClose = currentPrice;
 
       if (validCloses.length >= 2) {
-        // Si estamos en fin de semana o antes de que abra el mercado, Yahoo duplica 
-        // la vela de cierre o la congela. Este ciclo retrocede ignorando los días "congelados"
-        // hasta encontrar la última sesión donde el precio realmente cambió.
+        // On weekends or before the market opens, Yahoo duplicates
+        // or freezes the closing candle. This loop walks back past those "frozen" days
+        // until it finds the last session where the price actually changed.
         let idx = validCloses.length - 1;
         while (idx > 0 && validCloses[idx] === validCloses[idx - 1]) {
           idx--;
         }
 
-        // Ahora idx es el último día activo real. El cierre anterior es el día justo antes de ese.
+        // idx is now the last real active day; the reference close is the day right before it.
         if (idx > 0) {
           referenceClose = validCloses[idx - 1];
         } else {
@@ -82,7 +82,7 @@ async function fetchStockData(ticker) {
       }
 
       // ==========================================
-      // Máximos y Gráficos
+      // Highs and sparkline data
       // ==========================================
       const nowTs = Date.now() / 1000;
       let max30 = -Infinity, max365 = -Infinity;

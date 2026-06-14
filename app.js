@@ -4,9 +4,10 @@
 const DEFAULTS = {
   tickers: ['GOOGL', 'AAPL', 'MSFT', 'AMZN', 'NVDA', 'META'],
   shares: {}, // Format: { 'GOOGL': 10, 'AAPL': 5.5 }
-  tasks: [], // Tareas manuales (max 4)
+  tasks: [], // Manual notes (max 4)
   tasksEnabled: false,
   privacyMode: false,
+  onboarded: false,
   greeting: '🤖 HELLO, STRANGER',
   city: 'Buenos Aires'
 };
@@ -14,7 +15,7 @@ let editTickers = [];
 let editShares = {};
 let appState = { shares: {}, tasks: [], privacyMode: false };
 
-// Caché para actualizar la UI al instante sin volver a descargar datos
+// Cache to update the UI instantly without re-fetching data
 let cachedResults = [];
 
 // ========= DOM REFS =========
@@ -33,6 +34,8 @@ const dom = {
   cityInput: getEl('cityInput'),
   searchInput: getEl('searchInput'),
   tasksToggle: getEl('tasksToggle'),
+  onboardingHint: getEl('onboardingHint'),
+  dismissOnboarding: getEl('dismissOnboarding'),
 
   // Tasks
   tasksRow: getEl('tasksRow'),
@@ -65,6 +68,7 @@ const getStorage = () => new Promise(resolve => {
     tasks: DEFAULTS.tasks,
     tasksEnabled: DEFAULTS.tasksEnabled,
     privacyMode: DEFAULTS.privacyMode,
+    onboarded: DEFAULTS.onboarded,
     greeting: DEFAULTS.greeting,
     city: DEFAULTS.city
   }, data => {
@@ -102,6 +106,20 @@ const loadGreeting = async () => {
 };
 loadGreeting();
 
+// ========= ONBOARDING HINT (first run only) =========
+const dismissOnboarding = async () => {
+  dom.onboardingHint.style.display = 'none';
+  await setStorage({ onboarded: true });
+};
+
+const loadOnboarding = async () => {
+  const data = await getStorage();
+  if (!data.onboarded) dom.onboardingHint.style.display = 'flex';
+};
+loadOnboarding();
+
+dom.dismissOnboarding.addEventListener('click', dismissOnboarding);
+
 // ========= WEATHER =========
 const loadWeather = async () => {
   const data = await getStorage();
@@ -135,7 +153,7 @@ const loadWeather = async () => {
 };
 loadWeather();
 
-// ========= PRIVACY TOGGLE (EL OJITO) =========
+// ========= PRIVACY TOGGLE (THE EYE) =========
 dom.privacyToggle.addEventListener('click', async () => {
   appState.privacyMode = !appState.privacyMode;
   dom.privacyToggle.classList.toggle('active', appState.privacyMode);
@@ -224,18 +242,22 @@ const showLinkTooltip = () => {
   }, 10);
 };
 
-// Listener para el atajo de teclado Ctrl+K / Cmd+K
+// Keyboard shortcuts inside notes: Ctrl/Cmd+K (links) and Ctrl/Cmd+B (bold)
 document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-    const activeEl = document.activeElement;
-    if (activeEl && activeEl.classList.contains('task-content')) {
-      e.preventDefault();
-      showLinkTooltip();
-    }
+  const activeEl = document.activeElement;
+  const inNote = activeEl && activeEl.classList.contains('task-content');
+  if (!inNote || !(e.ctrlKey || e.metaKey)) return;
+
+  if (e.key === 'k') {
+    e.preventDefault();
+    showLinkTooltip();
+  } else if (e.key === 'b') {
+    e.preventDefault();
+    document.execCommand('bold', false, null);
   }
 });
 
-// Cerrar tooltip si se hace click afuera
+// Close the tooltip on outside click
 document.addEventListener('mousedown', (e) => {
   if (!dom.linkTooltip.contains(e.target)) {
     dom.linkTooltip.classList.remove('visible');
@@ -243,7 +265,7 @@ document.addEventListener('mousedown', (e) => {
   }
 });
 
-// Lógica al apretar Enter en el input del link
+// Handle Enter in the link input
 dom.linkUrlInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
@@ -258,7 +280,7 @@ dom.linkUrlInput.addEventListener('keydown', (e) => {
 
       document.execCommand('createLink', false, finalUrl);
 
-      // Asegurarnos que el link se abre en otra tab
+      // Make sure the link opens in a new tab
       const linkNode = sel.anchorNode.parentElement;
       if (linkNode && linkNode.tagName === 'A') {
         linkNode.target = "_blank";
@@ -268,7 +290,7 @@ dom.linkUrlInput.addEventListener('keydown', (e) => {
       savedSelection = null;
       sel.removeAllRanges();
 
-      // Opcional: Trigger blur para guardar al instante
+      // Optional: blur to save immediately
       if (document.activeElement && document.activeElement.classList.contains('task-content')) {
         document.activeElement.blur();
       }
@@ -296,7 +318,7 @@ const applyTasksVisibility = (enabled) => {
   }
 };
 
-// El interruptor de notas se guarda y aplica al instante, sin pasar por "Save".
+// The notes toggle saves and applies instantly, without going through "Save".
 dom.tasksToggle.addEventListener('change', async () => {
   const enabled = dom.tasksToggle.checked;
   await setStorage({ tasksEnabled: enabled });
@@ -329,13 +351,13 @@ const renderTasksUI = () => {
 
   dom.tasksRow.innerHTML = html;
 
-  // Lógica de Edición in situ (Rich Text)
+  // Inline editing (rich text)
   document.querySelectorAll('.task-content').forEach(contentDiv => {
     contentDiv.addEventListener('mousedown', e => {
       e.stopPropagation();
     });
 
-    // Forzar apertura de links al clickearlos
+    // Force links to open on click
     contentDiv.addEventListener('click', e => {
       if (e.target.tagName === 'A') {
         e.preventDefault();
@@ -410,24 +432,27 @@ const renderTasksUI = () => {
     });
   });
 
-  // Add Inline Edit Listeners (para los slots vacíos)
+  // Inline edit listeners (for empty slots)
+  // We use a contenteditable (not a plain textarea) so that bold (Cmd+B)
+  // and links (Cmd+K) work while typing, not only when reopening the note.
   document.querySelectorAll('.task-item.empty').forEach(slot => {
     slot.addEventListener('click', function () {
-      if (this.querySelector('textarea')) return;
+      if (this.querySelector('.task-content')) return;
 
       const targetIndex = parseInt(this.dataset.index);
 
       this.classList.remove('empty');
-      this.innerHTML = `<textarea class="task-inline-input" placeholder="Escribe y presiona Enter..." rows="2"></textarea>`;
+      this.innerHTML = `<div class="task-content task-inline-input" contenteditable="true" spellcheck="false" data-placeholder="Type and press Enter..."></div>`;
 
-      const input = this.querySelector('textarea');
+      const input = this.querySelector('.task-content');
       input.focus();
 
       const saveTask = async () => {
-        let val = input.value.trim();
-        val = val.replace(/\n/g, '<br>');
+        let val = input.innerHTML.trim();
+        if (val === '<br>') val = '';
 
         if (val) {
+          val = val.replace(/<a /g, '<a target="_blank" ');
           appState.tasks[targetIndex] = val;
           await setStorage({ tasks: appState.tasks });
         }
@@ -441,7 +466,11 @@ const renderTasksUI = () => {
         }
       });
 
-      input.addEventListener('blur', saveTask);
+      input.addEventListener('blur', (e) => {
+        // Don't save if the blur was to interact with the link tooltip.
+        if (dom.linkTooltip.contains(e.relatedTarget) || dom.linkTooltip.classList.contains('visible')) return;
+        saveTask();
+      });
     });
   });
 };
@@ -451,6 +480,8 @@ const renderTasksUI = () => {
 const openSettings = async () => {
   dom.overlay.classList.add('open');
   dom.panel.classList.add('open');
+
+  if (dom.onboardingHint.style.display !== 'none') dismissOnboarding();
 
   const data = await getStorage();
   editTickers = [...(data.tickers || DEFAULTS.tickers)];
@@ -870,8 +901,8 @@ const render = async () => {
     return;
   }
 
-  // La barra "Current Portfolio" solo tiene sentido si cargaste cuántas acciones
-  // tenés de algún ticker; sin shares guardadas, no hay un portafolio que resumir.
+  // The "Current Portfolio" bar only makes sense if you entered how many shares
+  // you hold of a ticker; with no shares saved there's no portfolio to summarize.
   const hasShares = Object.values(appState.shares).some(v => v > 0);
   if (dom.portfolioBar) dom.portfolioBar.style.display = hasShares ? 'flex' : 'none';
 

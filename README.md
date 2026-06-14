@@ -27,12 +27,13 @@ No accounts, no servers, no tracking — everything lives in your browser.
 
 ## Screenshots
 
-| Dashboard | Settings |
-|-----------|----------|
-| ![Dashboard](screenshots/dashboard.png) | ![Settings](screenshots/settings.png) |
+**Notes with bold and links** (`Cmd/Ctrl+B` and `Cmd/Ctrl+K`):
 
-> _To add your own screenshots, drop `dashboard.png` and `settings.png` into the
-> `screenshots/` folder. On macOS, `Cmd+Shift+4` lets you capture a region._
+![Notes with formatting](screenshots/notes.png)
+
+**Settings panel:**
+
+![Settings](screenshots/settings.png)
 
 ## Installation (load unpacked)
 

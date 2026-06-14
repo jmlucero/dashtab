@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Personal Dashboard",
+  "name": "dashtab",
   "version": "1.5.0",
   "description": "A clean new tab dashboard: live stocks, sticky notes, weather, clock and Google search.",
   "permissions": [
