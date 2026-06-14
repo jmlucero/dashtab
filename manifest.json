@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Personal Dashboard",
+  "version": "1.5.0",
+  "description": "A clean new tab dashboard: live stocks, sticky notes, weather, clock and Google search.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://query1.finance.yahoo.com/*",
+    "https://query2.finance.yahoo.com/*",
+    "https://geocoding-api.open-meteo.com/*",
+    "https://api.open-meteo.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-left">
+        <div class="logo" id="greeting">🤖 HELLO, STRANGER</div>
+      </div>
+      <div class="header-right">
+        <div class="clock" id="clock"></div>
+        <button class="settings-btn" id="openSettingsBtn">⚙ Settings</button>
+      </div>
+    </header>
+
+    <div class="search-weather-row">
+      <div class="search-bar-wrapper" id="searchWrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20">
+          <path fill="#9aa0a6"
+            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search Google" autocomplete="off">
+        <svg class="google-g" viewBox="0 0 48 48" width="20" height="20">
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+        </svg>
+      </div>
+      <div class="weather-widget" id="weatherWidget">
+        <div class="weather-loading">...</div>
+      </div>
+    </div>
+
+    <div class="tasks-row" id="tasksRow"></div>
+
+    <div class="portfolio-bar" id="portfolioBar">
+      <div class="portfolio-metrics">
+        <span class="portfolio-title">Current Portfolio</span>
+        <button id="privacyToggle" class="privacy-btn" title="Toggle Privacy">👁️</button>
+
+        <div class="metric-divider"></div>
+
+        <span class="metric-val" id="portTotalValue" style="color: var(--accent);">$0.00</span>
+
+        <div class="metric-divider"></div>
+
+        <span class="metric-label">Today</span>
+        <span class="metric-val" id="portToday">--%</span>
+
+        <div class="metric-divider"></div>
+
+        <span class="metric-label">30D</span>
+        <span class="metric-val" id="port30D">--%</span>
+
+        <div class="metric-divider"></div>
+
+        <span class="metric-label">365D</span>
+        <span class="metric-val" id="port365D">--%</span>
+      </div>
+    </div>
+
+    <div id="content">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading market data...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="linkTooltip" class="link-tooltip">
+    <button id="makeLinkBtn">🔗 Link</button>
+    <div id="linkInputContainer" style="display: none;">
+      <input type="text" id="linkUrlInput" placeholder="Paste URL and hit Enter..." autocomplete="off">
+    </div>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay"></div>
+  <div class="settings-panel" id="settingsPanel">
+    <button class="btn-close-panel" id="closePanelBtn">×</button>
+    <h2>◆ Settings</h2>
+    <p class="settings-subtitle">Customize your dashboard.</p>
+
+    <div class="section-label">Greeting</div>
+    <div class="input-row">
+      <input type="text" id="greetingInput" placeholder="e.g. 🤖 HELLO, STRANGER" maxlength="40" class="input-wide">
+    </div>
+
+    <div class="section-label">Weather city</div>
+    <div class="input-row">
+      <input type="text" id="cityInput" placeholder="e.g. Buenos Aires, New York, London" maxlength="60"
+        class="input-wide">
+    </div>
+
+    <div class="settings-divider"></div>
+
+    <div class="toggle-row">
+      <div class="toggle-text">
+        <div class="section-label">Notes</div>
+        <p class="hint">Show the sticky notes row on your dashboard.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="tasksToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-divider"></div>
+
+    <div class="section-label">Add ticker</div>
+    <div class="input-row">
+      <input type="text" id="tickerInput" placeholder="e.g. GOOGL, TSLA, BTC-USD" maxlength="20">
+      <button class="btn" id="addBtn">Add</button>
+    </div>
+
+    <div class="section-label">Quick add</div>
+    <div class="preset-chips" id="presetChips">
+      <span class="preset-chip" data-ticker="GOOGL">GOOGL</span>
+      <span class="preset-chip" data-ticker="GOOG">GOOG</span>
+      <span class="preset-chip" data-ticker="AAPL">AAPL</span>
+      <span class="preset-chip" data-ticker="MSFT">MSFT</span>
+      <span class="preset-chip" data-ticker="AMZN">AMZN</span>
+      <span class="preset-chip" data-ticker="NVDA">NVDA</span>
+      <span class="preset-chip" data-ticker="META">META</span>
+      <span class="preset-chip" data-ticker="TSLA">TSLA</span>
+      <span class="preset-chip" data-ticker="BTC-USD">BTC</span>
+      <span class="preset-chip" data-ticker="ETH-USD">ETH</span>
+      <span class="preset-chip" data-ticker="^GSPC">S&P 500</span>
+      <span class="preset-chip" data-ticker="^DJI">DOW</span>
+      <span class="preset-chip" data-ticker="MELI">MELI</span>
+    </div>
+
+    <div class="section-label">Your tickers & Shares</div>
+    <p class="hint">Enter the amount of shares you own to enable weighted portfolio math. Leave blank for equal-weight.
+    </p>
+    <div class="ticker-list" id="tickerList"></div>
+
+    <div class="settings-actions">
+      <button class="btn" id="saveBtn">💾 Save &amp; Reload</button>
+      <button class="btn btn-outline" id="resetBtn">Reset Defaults</button>
+    </div>
+
+    <div class="settings-divider"></div>
+
+    <div class="section-label">Backup & Restore</div>
+    <p class="hint">Save your setup to a file so you never lose it during updates.</p>
+    <div class="settings-actions">
+      <button class="btn btn-outline" id="exportBtn">⬇ Export Backup</button>
+      <button class="btn btn-outline" id="importBtn">⬆ Import Backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

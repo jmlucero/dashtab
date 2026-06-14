@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Editor / OS cruft
+*.swp
+Thumbs.db
+
+# Office exports (we keep docs as plain markdown)
+*.docx
+
+# Local backups exported from the extension
+dashboard-backup-*.json

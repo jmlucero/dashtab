@@ -1,0 +1,84 @@
+# dashtab
+
+A clean, fast **new tab dashboard** for Chrome. Replaces the default new tab page
+with the things you actually want at a glance: live stock prices and portfolio
+performance, sticky notes, weather, a clock and a Google search bar.
+
+No accounts, no servers, no tracking — everything lives in your browser.
+
+![dashtab dashboard](screenshots/dashboard.png)
+
+## Features
+
+- 📈 **Live stocks** — track any ticker (stocks, indices, crypto via Yahoo Finance).
+  Each card shows the daily change, a 90-day sparkline, and the 30-day / 365-day highs.
+- 💼 **Portfolio summary** — enter how many shares you own and get weighted
+  performance for Today, 30D and 365D. The summary bar only appears when you
+  actually have holdings, so a price-only watchlist stays clean.
+- 👁️ **Privacy mode** — one click hides your total value and holdings (`***`),
+  handy when sharing your screen.
+- 📝 **Sticky notes** — up to four quick notes with inline editing, drag-to-reorder
+  and `Ctrl/Cmd+K` to turn selected text into a link. Off by default; enable it in Settings.
+- 🌤️ **Weather** — current conditions for any city (powered by Open-Meteo).
+- 🔍 **Search & clock** — Google search bar (auto-focused) and a live 24h clock.
+- 💾 **Backup & restore** — export your whole setup to a `.json` file and import it
+  back, so updates never wipe your configuration.
+- 🔄 **Chrome sync** — your settings follow you across devices via `chrome.storage.sync`.
+
+## Screenshots
+
+| Dashboard | Settings |
+|-----------|----------|
+| ![Dashboard](screenshots/dashboard.png) | ![Settings](screenshots/settings.png) |
+
+> _To add your own screenshots, drop `dashboard.png` and `settings.png` into the
+> `screenshots/` folder. On macOS, `Cmd+Shift+4` lets you capture a region._
+
+## Installation (load unpacked)
+
+dashtab is not on the Chrome Web Store — you load it manually in seconds:
+
+1. Download or clone this repository.
+2. Open `chrome://extensions` in Chrome.
+3. Turn on **Developer mode** (top-right toggle).
+4. Click **Load unpacked** and select the project folder.
+5. Open a new tab. That's it.
+
+To update later, pull the latest changes and hit the reload (↻) button on the
+extension card in `chrome://extensions`.
+
+## Usage
+
+- Click **⚙ Settings** (top-right) to add tickers, set your city, edit the greeting
+  and toggle the notes row.
+- Use the **Quick add** chips for common tickers, or type any symbol (e.g. `GOOGL`,
+  `BTC-USD`, `^GSPC`).
+- Enter **shares** next to a ticker to unlock weighted portfolio math. Leave it
+  blank to keep it as a simple watchlist.
+- The notes toggle and privacy toggle save instantly — no need to reload.
+
+## Privacy
+
+dashtab has **no backend of its own** and collects nothing. Specifically:
+
+- Your tickers, shares, notes and preferences are stored locally in
+  `chrome.storage.sync` (synced by Chrome to your Google account if you have sync on).
+- Stock data is requested directly from **Yahoo Finance** (`query1/query2.finance.yahoo.com`).
+- Weather data is requested directly from **Open-Meteo** (`open-meteo.com`).
+- The only permissions requested are `storage` and host access to those two APIs
+  (see [`manifest.json`](manifest.json)).
+
+## How it works
+
+- `newtab.html` + `styles.css` + `app.js` render the dashboard and handle all UI.
+- `background.js` is a service worker that fetches stock and weather data — this
+  keeps requests off the page and sidesteps CORS restrictions.
+- Manifest V3, no build step, no dependencies. Plain HTML/CSS/JS.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## License
+
+[MIT](LICENSE) © jmlucero
